@@ -37,24 +37,35 @@ var file_system_tree = function()
 			{
 				var file_name = tmp_list[key];
 				var full_path = target_dir + file_name;
-				var stat = fs.statSync(full_path);
+				if (this.file_filter !== undefined)
+				{
+					if (this.file_filter(full_path, file_name))
+					{
+						console.log(file_name, "blocked by filter");
+						continue;
+					}
+				}
+				var stat;
+				try
+				{
+					stat = fs.statSync(full_path);
+				}
+				catch (e)
+				{
+					console.log("Error".red);
+					console.log(e);
+					continue;
+				}
 				if (this.show_scan_dir_flag) console.log(full_path);
 				if (stat.isDirectory())
 				{
 					if (this.show_scan_dir_flag) console.log("is dir".green);
-					this.scan_dir_unit(full_path + "/");
+					//this.scan_dir_unit(full_path + "/");
 				}
 				else
 				{
 					if (this.show_scan_dir_flag) console.log("is not a dir".red);
-					if (this.file_filter !== undefined)
-					{
-						if (this.file_filter(full_path, file_name))
-						{
-							console.log(file_name, "blocked by filter");
-							continue;
-						}
-					}
+					
 					this.file_list_hash[file_name] = this.file_list.length;
 					this.path_list.push(full_path);
 					this.file_list.push(file_name);
@@ -84,7 +95,7 @@ var file_system_tree = function()
 }
 
 var PG = file_system_tree();
-PG.scan_dir("I:/sense/Anime/");
+PG.scan_dir("E:/BT/BT_completed/");
 var express = require('express');
 var app = express();
 app.get("/", function(req, res)
@@ -147,4 +158,4 @@ app.get("/getfile/:file/go", function(req, res)
 
 });
 
-app.listen(35100);
+app.listen(35101);
