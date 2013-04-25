@@ -9,10 +9,13 @@ var file_system_tree = function()
 	{
 		file_list:[],
 		path_list:[],
+		file_list_hash:[],
 		show_scan_dir_flag:false,
 		scan_dir:function(target_dir)
 		{
-			file_list = [];
+			this.file_list = [];
+			this.path_list = [];
+			this.file_list_hash = [];
 			this.scan_dir_unit(target_dir);
 			console.log(this.file_list.length);
 		},
@@ -22,20 +25,37 @@ var file_system_tree = function()
 			var tmp_list = fs.readdirSync(target_dir);
 			for (var key in tmp_list)
 			{
-				var file_name = target_dir + tmp_list[key];
-				if (this.show_scan_dir_flag) console.log(file_name);
-				if (fs.statSync(file_name).isDirectory())
+				var file_name = tmp_list[key];
+				var full_path = target_dir + file_name;
+				if (this.show_scan_dir_flag) console.log(full_path);
+				if (fs.statSync(full_path).isDirectory())
 				{
 					if (this.show_scan_dir_flag) console.log("is dir".green);
-					this.scan_dir_unit(file_name + "/");
+					this.scan_dir_unit(full_path + "/");
 				}
 				else
 				{
 					if (this.show_scan_dir_flag) console.log("is not a dir".red);
+					this.file_list_hash[file_name] = this.file_list.length;
+					this.path_list.push(full_path);
 					this.file_list.push(file_name);
+
 				}
 			}
-
+		},
+		query:function(query_in)
+		{
+			if (this.file_list_hash[query_in] !== undefined)
+			{
+				var at = this.file_list_hash[query_in];
+				var result = 
+				{
+					file_name: this.file_list[at],
+					full_path: this.path_list[at]
+				}
+				return result;
+			}
+			else return undefined;
 		}
 
 	}
@@ -53,6 +73,20 @@ app.get("/", function(req, res)
 });
 app.get("/getfile/:file", function(req, res)
 {
+	var output_buffer = "";
+	var query_result = PG.query(req.params["file"]);
+	if (query_result !== undefined)
+	{
+		output_buffer += query_result.file_name + "<br>";
+		output_buffer += query_result.full_path + "<br>";
+		output_buffer += "Yes<br>";
+	}
+	else
+	{
+		output_buffer += "No";
+	}
+	res.send(output_buffer);
+
 
 
 });
