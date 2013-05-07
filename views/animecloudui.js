@@ -1,0 +1,1 @@
+$("body").ready(function(){$("body").append("123")});
