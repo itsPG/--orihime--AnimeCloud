@@ -11,7 +11,6 @@ var file_system_tree = function()
 		path_list:[],
 		stat_list:[],
 		md5_list:[],
-		file_list_hash:[],
 		show_scan_dir_flag:false,
 		file_filter:undefined,
 		default_filter:function(full_path, file_name)
@@ -27,7 +26,7 @@ var file_system_tree = function()
 			this.stat_list = [];
 			this.md5_list = [];
 			this.md5_map = [];
-			this.file_list_hash = [];
+
 			this.file_filter = this.default_filter;
 			this.scan_dir_unit(target_dir);
 			console.log(this.file_list.length);
@@ -73,7 +72,7 @@ var file_system_tree = function()
 					var hash = crypto.createHash('md5').update(full_path).digest("hex");
 					console.log(hash);
 					this.md5_map[hash] = this.file_list.length;
-					this.file_list_hash[file_name] = this.file_list.length;
+
 					this.md5_list.push(hash);
 					this.path_list.push(full_path);
 					this.file_list.push(file_name);
@@ -107,6 +106,11 @@ var PG = file_system_tree();
 PG.scan_dir("I:/sense/Anime/");
 var express = require('express');
 var app = express();
+var cons = require("consolidate");
+app.engine("haml", cons.haml);
+app.set("view engine", "haml");
+app.set("views", __dirname + "/views");
+
 app.get("/", function(req, res)
 {
 	console.log(req);
@@ -134,6 +138,9 @@ app.get("/getfile/:file", function(req, res)
 	if (query_result !== undefined)
 	{
 		output_buffer += "<pre>" + query_result.file_stat.size + "</pre>";
+		output_buffer += "<pre>" + query_result.file_stat.atime + "</pre>";
+		output_buffer += "<pre>" + query_result.file_stat.mtime + "</pre>";
+		output_buffer += "<pre>" + query_result.file_stat.ctime + "</pre>";
 		output_buffer += query_result.file_name + "<br>";
 		output_buffer += query_result.full_path + "<br>";
 		output_buffer += "Yes<br>";
@@ -167,5 +174,21 @@ app.get("/getfile/:file/go", function(req, res)
 
 
 });
+
+app.get("/haml", function(req, res)
+{
+
+	
+	res.render("animecloud",
+	{
+		title:"test",
+		title2:"t2",
+		items:["1", "2", "3"],
+		tmp123:"123123"
+
+	});
+
+});
+app.use('/views', express.static(__dirname + '/views'));
 
 app.listen(35101);
