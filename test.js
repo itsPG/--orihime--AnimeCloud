@@ -8,9 +8,7 @@ var file_system_tree = function()
 	var r = 
 	{
 		file_list:[],
-		path_list:[],
-		stat_list:[],
-		md5_list:[],
+		md5_map:[],
 		show_scan_dir_flag:false,
 		file_filter:undefined,
 		default_filter:function(full_path, file_name)
@@ -22,9 +20,6 @@ var file_system_tree = function()
 		scan_dir:function(target_dir)
 		{
 			this.file_list = [];
-			this.path_list = [];
-			this.stat_list = [];
-			this.md5_list = [];
 			this.md5_map = [];
 
 			this.file_filter = this.default_filter;
@@ -37,13 +32,14 @@ var file_system_tree = function()
 			var tmp_list = fs.readdirSync(target_dir);
 			for (var key in tmp_list)
 			{
-				var file_name = tmp_list[key];
-				var full_path = target_dir + file_name;
+				var r = {};
+				r.file_name = tmp_list[key];
+				r.full_path = target_dir + r.file_name;
 				
-				var stat;
+
 				try
 				{
-					stat = fs.statSync(full_path);
+					r.stat = fs.statSync(r.full_path);
 				}
 				catch (e)
 				{
@@ -52,10 +48,10 @@ var file_system_tree = function()
 					continue;
 				}
 				if (this.show_scan_dir_flag) console.log(full_path);
-				if (stat.isDirectory())
+				if (r.stat.isDirectory())
 				{
 					if (this.show_scan_dir_flag) console.log("is dir".green);
-					this.scan_dir_unit(full_path + "/");
+					this.scan_dir_unit(r.full_path + "/");
 				}
 				else
 				{
@@ -63,20 +59,18 @@ var file_system_tree = function()
 					if (this.show_scan_dir_flag) console.log("is not a dir".red);
 					if (this.file_filter !== undefined)
 					{
-						if (this.file_filter(full_path, file_name))
+						if (this.file_filter(r.full_path, r.file_name))
 						{
-							console.log(file_name, "blocked by filter");
+							console.log(r.file_name, "blocked by filter");
 							continue;
 						}
 					}
-					var hash = crypto.createHash('md5').update(full_path).digest("hex");
+					var hash = crypto.createHash('md5').update(r.full_path).digest("hex");
 					console.log(hash);
 					this.md5_map[hash] = this.file_list.length;
+					r.md5 = hash;
 
-					this.md5_list.push(hash);
-					this.path_list.push(full_path);
-					this.file_list.push(file_name);
-					this.stat_list.push(stat);
+					this.file_list.push(r);
 
 
 				}
@@ -87,23 +81,21 @@ var file_system_tree = function()
 			if (this.md5_map[query_in] !== undefined)
 			{
 				var at = this.md5_map[query_in];
-				var result = 
-				{
-					file_name: this.file_list[at],
-					full_path: this.path_list[at],
-					file_stat: this.stat_list[at]
-				}
-				return result;
+				return this.file_list[at];
 			}
 			else return undefined;
-		}
+		},
+
+
 
 	}
 	return r;
 }
 
 var PG = file_system_tree();
-PG.scan_dir("I:/sense/Anime/");
+//PG.scan_dir("I:/sense/Anime/");
+PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
+//PG.scan_dir("");
 var express = require('express');
 var app = express();
 var cons = require("consolidate");
@@ -120,10 +112,10 @@ app.get("/", function(req, res)
 app.get("/list", function(req, res)
 {
 	var output_buffer = "";
-	for (var key in PG.file_list)
+	for (var i = 0; i < PG.file_list.length; i++)
 	{
-
-		var tmp = "<a href = \"/getfile/" + PG.md5_list[key] + "\">" + PG.file_list[key] + "</a><br>";
+		var file = PG.file_list[i];
+		var tmp = "<a href = \"/getfile/" + file.md5 + "\">" + file.file_name + "</a><br>";
 		output_buffer += tmp;
 	}
 	res.send(output_buffer);
@@ -137,14 +129,14 @@ app.get("/getfile/:file", function(req, res)
 	var query_result = PG.query(req.params["file"]);
 	if (query_result !== undefined)
 	{
-		output_buffer += "<pre>" + query_result.file_stat.size + "</pre>";
-		output_buffer += "<pre>" + query_result.file_stat.atime + "</pre>";
-		output_buffer += "<pre>" + query_result.file_stat.mtime + "</pre>";
-		output_buffer += "<pre>" + query_result.file_stat.ctime + "</pre>";
+		output_buffer += "<pre>" + query_result.stat.size + "</pre>";
+		output_buffer += "<pre>" + query_result.stat.atime + "</pre>";
+		output_buffer += "<pre>" + query_result.stat.mtime + "</pre>";
+		output_buffer += "<pre>" + query_result.stat.ctime + "</pre>";
 		output_buffer += query_result.file_name + "<br>";
 		output_buffer += query_result.full_path + "<br>";
 		output_buffer += "Yes<br>";
-		output_buffer += "<a href=\"./" + query_result.file_name + "/go\"> Download </a><br>";
+		output_buffer += "<a href=\"./" + query_result.md5 + "/go\"> Download </a><br>";
 	}
 	else
 	{
@@ -162,6 +154,7 @@ app.get("/getfile/:file/go", function(req, res)
 
 	var output_buffer = "";
 	var query_result = PG.query(req.params["file"]);
+	console.log(query_result);
 	if (query_result !== undefined)
 	{
 		res.download(query_result.full_path);
