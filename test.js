@@ -9,26 +9,28 @@ var file_system_tree = function()
 	{
 		file_list:[],
 		md5_map:[],
-		show_scan_dir_flag:false,
+		show_scan_dir_flag:true,
 		file_filter:undefined,
+
 		default_filter:function(full_path, file_name)
 		{
 			if (!file_name.match(/.mp4$/)) return true;
 			else return false;
-
 		},
-		scan_dir:function(target_dir)
+		init:function()
 		{
 			this.file_list = [];
 			this.md5_map = [];
-
 			this.file_filter = this.default_filter;
+		},
+		scan_dir:function(target_dir)
+		{
 			this.scan_dir_unit(target_dir);
-			console.log(this.file_list.length);
+			console.log("scan_dir".green, this.file_list.length);
 		},
 		scan_dir_unit:function(target_dir)
 		{
-			if (this.show_scan_dir_flag) console.log(("scan " + target_dir).bgred.yellow);
+			if (this.show_scan_dir_flag) console.log(("scan " + target_dir).yellow);
 			var tmp_list = fs.readdirSync(target_dir);
 			for (var key in tmp_list)
 			{
@@ -47,21 +49,17 @@ var file_system_tree = function()
 					console.log(e);
 					continue;
 				}
-				if (this.show_scan_dir_flag) console.log(full_path);
 				if (r.stat.isDirectory())
 				{
-					if (this.show_scan_dir_flag) console.log("is dir".green);
 					this.scan_dir_unit(r.full_path + "/");
 				}
 				else
 				{
-
-					if (this.show_scan_dir_flag) console.log("is not a dir".red);
 					if (this.file_filter !== undefined)
 					{
 						if (this.file_filter(r.full_path, r.file_name))
 						{
-							console.log(r.file_name, "blocked by filter");
+							//console.log(r.file_name, "blocked by filter");
 							continue;
 						}
 					}
@@ -94,7 +92,10 @@ var file_system_tree = function()
 
 var PG = file_system_tree();
 //PG.scan_dir("I:/sense/Anime/");
+PG.init();
 PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
+
+
 //PG.scan_dir("");
 var express = require('express');
 var app = express();
