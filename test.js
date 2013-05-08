@@ -10,6 +10,7 @@ var file_system_tree = function()
 	{
 		file_list:[],
 		/*
+			failed_flag,
 			file_name,
 			full_path,
 			md5,
@@ -17,8 +18,10 @@ var file_system_tree = function()
 			tag,
 			anime_name,
 			anime_vol,
+			anime_vol_num
 		*/
 		md5_map:[],
+		anime_list:[],
 		show_scan_dir_flag:true,
 		file_filter:undefined,
 
@@ -42,6 +45,7 @@ var file_system_tree = function()
 		{
 			this.file_list = [];
 			this.md5_map = [];
+			this.anime_list = [];
 			this.file_filter = this.default_filter;
 		},
 		scan_dir: function(target_dir)
@@ -101,13 +105,33 @@ var file_system_tree = function()
 						{
 							//console.log(r.file_name, r.tag[i]);
 							r.anime_vol = r.tag[i];
+							var tmp = r.tag[i].match(/^[0-9]+/);
+							r.anime_vol_num = Number(tmp[0]);
 						}
 					}
 					r.anime_name = r.tag[1];
 
-					r.stat = "";
-					/* for jsdump */
+					if (r.anime_vol_num !== undefined)
+					{
+						if (this.anime_list[r.anime_name] === undefined)
+						{
+							this.anime_list[r.anime_name] = [];
+							console.log("init".cyan);
+						}
+						if (this.anime_list[r.anime_name][r.anime_vol_num] === undefined)
+						{
+							this.anime_list[r.anime_name][r.anime_vol_num] = this.file_list.length;
+							console.log("set".magenta, r.anime_name, r.anime_vol_num);
+						}
+						else
+						{
 
+						}
+					}
+					//console.log(this.anime_list);
+
+					r.stat = r.stat.ctime;
+					/* for jsdump */
 					this.file_list.push(r);
 
 				}
@@ -133,7 +157,7 @@ var PG = file_system_tree();
 //PG.scan_dir("I:/sense/Anime/");
 PG.init();
 PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
-
+console.log(PG.anime_list);
 
 //PG.scan_dir("");
 var express = require('express');
@@ -158,9 +182,14 @@ app.get("/list", function(req, res)
 		var tmp = "<a href = \"/getfile/" + file.md5 + "\">" + file.file_name + "</a><br>";
 		output_buffer += tmp;
 	}
-	output_buffer += "<pre>" + jsdump.parse(PG) + "</pre>";
+	output_buffer += "<pre>" + jsdump.parse(PG) + jsdump.parse(PG.anime_list) + "</pre>";
 	res.send(output_buffer);
 
+
+});
+app.get("/list2", function(req, res)
+{
+	res.send("test");
 
 });
 app.get("/getfile/:file", function(req, res)
