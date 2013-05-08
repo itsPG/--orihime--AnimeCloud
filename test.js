@@ -1,7 +1,8 @@
 var fs = require("fs");
 var cs = require("colorplus").enable();
 var crypto = require("crypto");
-
+var jsdump = require("./jsdump.js");
+jsdump.html = true;
 
 var file_system_tree = function()
 {
@@ -70,6 +71,8 @@ var file_system_tree = function()
 					console.log(e);
 					continue;
 				}
+
+
 				if (r.stat.isDirectory())
 				{
 					this.scan_dir_unit(r.full_path + "/");
@@ -101,10 +104,11 @@ var file_system_tree = function()
 						}
 					}
 					r.anime_name = r.tag[1];
+
+					r.stat = "";
+					/* for jsdump */
+
 					this.file_list.push(r);
-
-					//console.log(r);
-
 
 				}
 			}
@@ -154,6 +158,7 @@ app.get("/list", function(req, res)
 		var tmp = "<a href = \"/getfile/" + file.md5 + "\">" + file.file_name + "</a><br>";
 		output_buffer += tmp;
 	}
+	output_buffer += "<pre>" + jsdump.parse(PG) + "</pre>";
 	res.send(output_buffer);
 
 
