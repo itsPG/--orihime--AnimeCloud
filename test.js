@@ -8,27 +8,45 @@ var file_system_tree = function()
 	var r = 
 	{
 		file_list:[],
+		/*
+			file_name,
+			full_path,
+			md5,
+			stat,
+			tag,
+		*/
 		md5_map:[],
 		show_scan_dir_flag:true,
 		file_filter:undefined,
 
-		default_filter:function(full_path, file_name)
+		clean_ary: function(target_ary, delete_value)
+		{
+			for (var i = 0; i < target_ary.length; i++)
+			{
+				if (target_ary[i] == delete_value)
+				{         
+					target_ary.splice(i, 1);
+					i--;
+				}
+			}
+		},
+		default_filter: function(full_path, file_name)
 		{
 			if (!file_name.match(/.mp4$/)) return true;
 			else return false;
 		},
-		init:function()
+		init: function()
 		{
 			this.file_list = [];
 			this.md5_map = [];
 			this.file_filter = this.default_filter;
 		},
-		scan_dir:function(target_dir)
+		scan_dir: function(target_dir)
 		{
 			this.scan_dir_unit(target_dir);
 			console.log("scan_dir".green, this.file_list.length);
 		},
-		scan_dir_unit:function(target_dir)
+		scan_dir_unit: function(target_dir)
 		{
 			if (this.show_scan_dir_flag) console.log(("scan " + target_dir).yellow);
 			var tmp_list = fs.readdirSync(target_dir);
@@ -36,6 +54,7 @@ var file_system_tree = function()
 			{
 				var r = {};
 				r.file_name = tmp_list[key];
+				//console.log(r.file_name.red);
 				r.full_path = target_dir + r.file_name;
 				
 
@@ -45,7 +64,7 @@ var file_system_tree = function()
 				}
 				catch (e)
 				{
-					console.log("Error".red);
+					console.log("Error".red, "in file", r.full_path);
 					console.log(e);
 					continue;
 				}
@@ -68,13 +87,17 @@ var file_system_tree = function()
 					this.md5_map[hash] = this.file_list.length;
 					r.md5 = hash;
 
+					var tag_tmp = r.file_name.split(".");
+					r.tag = tag_tmp[0].split(/[\[\]]+/);
+					this.clean_ary(r.tag, "");
+					//r.tag.PG_clean("");
 					this.file_list.push(r);
 
 
 				}
 			}
 		},
-		query:function(query_in)
+		query: function(query_in)
 		{
 			if (this.md5_map[query_in] !== undefined)
 			{
@@ -136,6 +159,7 @@ app.get("/getfile/:file", function(req, res)
 		output_buffer += "<pre>" + query_result.stat.ctime + "</pre>";
 		output_buffer += query_result.file_name + "<br>";
 		output_buffer += query_result.full_path + "<br>";
+		output_buffer += query_result.tag[0] + " " + query_result.tag[1] + "<br>";
 		output_buffer += "Yes<br>";
 		output_buffer += "<a href=\"./" + query_result.md5 + "/go\"> Download </a><br>";
 	}
