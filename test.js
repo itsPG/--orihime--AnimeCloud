@@ -14,6 +14,8 @@ var file_system_tree = function()
 			md5,
 			stat,
 			tag,
+			anime_name,
+			anime_vol,
 		*/
 		md5_map:[],
 		show_scan_dir_flag:true,
@@ -90,8 +92,18 @@ var file_system_tree = function()
 					var tag_tmp = r.file_name.split(".");
 					r.tag = tag_tmp[0].split(/[\[\]]+/);
 					this.clean_ary(r.tag, "");
-					//r.tag.PG_clean("");
+					for (var i = 0; i < r.tag.length; i++)
+					{
+						if (r.tag[i].match(/^[0-9vend ]+$/i))
+						{
+							//console.log(r.file_name, r.tag[i]);
+							r.anime_vol = r.tag[i];
+						}
+					}
+					r.anime_name = r.tag[1];
 					this.file_list.push(r);
+
+					//console.log(r);
 
 
 				}
