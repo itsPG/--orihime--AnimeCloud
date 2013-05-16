@@ -15,12 +15,13 @@
         - for (var i = 0, j = 0; i < anime_list.length; i++)
           %tr
             %td= anime_list[i].name
-            - for (j = 0; j < anime_list[i].data.length; j++)
+            %td= anime_list[i].max_vol
+            - for (j = 1; j < anime_list[i].max_vol; j++)
               %td
-                - if (anime_list[i].data[j].file_name != undefined)
+                - if (!anime_list[i].data[j].empty)
                   %a{href:"123"}=anime_list[i].data[j].vol
-                - if (anime_list[i].data[j].file_name == undefined)
-                  %span=anime_list[i].data[j].vol
+                - if (anime_list[i].data[j].empty)
+                  %span= (j < 10 ? "0"+j : ""+j)
 
 
 

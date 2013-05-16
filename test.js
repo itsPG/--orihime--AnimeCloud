@@ -211,7 +211,8 @@ var file_system_tree = function()
 			{
 				console.log(i.cyan);
 
-				var max_vol = find_max_vol(anime_list[i]);
+				//var max_vol = find_max_vol(anime_list[i]);
+				max_vol = 13;
 				var last_update_time = new Date(1970,1,1,0,0,0,0);
 				var data = [];
 
@@ -222,7 +223,7 @@ var file_system_tree = function()
 					if (at === undefined)
 					{
 						console.log( (j + " ").yellow , "--".red );
-						tmp2 = {vol: pad_zero(j)};
+						tmp2 = {empty: true};
 					}
 					else
 					{
@@ -235,11 +236,12 @@ var file_system_tree = function()
 							origin_path: this.file_list[at].full_path,
 							download_path: this.file_list[at].md5,
 							create_time: this.file_list[at].stat.ctime,
+							empty: false,
 						}
 						if (tmp2.create_time > last_update_time) last_update_time = tmp2.create_time;
 						console.log(tmp2);
 					}
-					data.push(tmp2);
+					data[j] = tmp2;
 
 
 				}
