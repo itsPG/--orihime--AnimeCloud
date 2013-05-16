@@ -116,17 +116,12 @@ var file_system_tree = function()
 						if (this.anime_list[r.anime_name] === undefined)
 						{
 							this.anime_list[r.anime_name] = [];
-							console.log("init".cyan);
+							//console.log("init".cyan);
 						}
-						if (this.anime_list[r.anime_name][r.anime_vol_num] === undefined)
-						{
-							this.anime_list[r.anime_name][r.anime_vol_num] = this.file_list.length;
-							console.log("set".magenta, r.anime_name, r.anime_vol_num);
-						}
-						else
-						{
 
-						}
+						this.anime_list[r.anime_name][r.anime_vol_num] = this.file_list.length;
+						//console.log("set".magenta, r.anime_name, r.anime_vol_num);
+						
 					}
 					//console.log(this.anime_list);
 
@@ -137,6 +132,40 @@ var file_system_tree = function()
 				}
 			}
 		},
+		show_anime_list: function()
+		{
+			var find_max_vol = function(q)
+			{
+				var r = -1;
+				for (var i in q)
+				{
+					if (q[i] > r) r = q[i];
+				}
+				return r;
+			}
+			var anime_list = this.anime_list;
+			for (var i in anime_list)
+			{
+				console.log(i.red);
+
+				var max_vol = find_max_vol(anime_list[i]);
+				console.log("max_vol".cyan, max_vol);
+				for (var j = 0; j <= max_vol; j++)
+				{
+					//console.log(anime_list[i]);
+					if ((anime_list[i]).indexOf(j) == -1)
+					{
+						console.log("--");
+					}
+					else
+					{
+						console.log( (j + " ").yellow );
+					}
+
+				}
+			}
+
+		},
 		query: function(query_in)
 		{
 			if (this.md5_map[query_in] !== undefined)
@@ -146,6 +175,12 @@ var file_system_tree = function()
 			}
 			else return undefined;
 		},
+		views_list: function()
+		{
+			var r = [];
+
+		},
+
 
 
 
@@ -158,6 +193,7 @@ var PG = file_system_tree();
 PG.init();
 PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
 console.log(PG.anime_list);
+PG.show_anime_list();
 
 //PG.scan_dir("");
 var express = require('express');
@@ -189,7 +225,13 @@ app.get("/list", function(req, res)
 });
 app.get("/list2", function(req, res)
 {
-	res.send("test");
+	//res.send("test");
+	res.render("list",
+	{
+		jsdump:jsdump,
+		anime_list:PG.anime_list,
+		test: "test ok",
+	});
 
 });
 app.get("/getfile/:file", function(req, res)
