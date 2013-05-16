@@ -1,0 +1,28 @@
+!!!
+%html
+  %head
+    %title Welcome
+    %script{ src: '//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js', type: 'text/javascript' }
+    %script{ src: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js", type: "text/javascript"}
+    %link{ href:"//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css", rel:"stylesheet"}
+    %link{ href:"/views/PG.css", rel:"stylesheet"}
+
+    -# javascript filter (and others)
+    -# support arbitrary whitespace
+  %body
+    %div.container
+      %table.table.table-hover
+        - for (var i = 0, j = 0; i < anime_list.length; i++)
+          %tr
+            %td= anime_list[i].name
+            - for (j = 0; j < anime_list[i].data.length; j++)
+              %td
+                - if (anime_list[i].data[j].file_name != undefined)
+                  %a{href:"123"}=anime_list[i].data[j].vol
+                - if (anime_list[i].data[j].file_name == undefined)
+                  %span=anime_list[i].data[j].vol
+
+
+
+
+    

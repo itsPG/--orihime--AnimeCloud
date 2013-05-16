@@ -182,6 +182,7 @@ var file_system_tree = function()
 				r.max_vol
 				r.last_update_time
 				r.data[]
+					[i].vol
 					[i].file_name
 					[i].file_size
 					[i].origin_path
@@ -195,6 +196,12 @@ var file_system_tree = function()
 				{
 					if (q[i] > r) r = q[i];
 				}
+				return r;
+			}
+			var pad_zero = function(q)
+			{
+				var r = q + "";
+				if (q < 10) r = "0" + r;
 				return r;
 			}
 			var anime_list = this.anime_list;
@@ -215,12 +222,14 @@ var file_system_tree = function()
 					if (at === undefined)
 					{
 						console.log( (j + " ").yellow , "--".red );
+						tmp2 = {vol: pad_zero(j)};
 					}
 					else
 					{
 						console.log( (j + " ").yellow , (at + " ").green );
 						tmp2 = 
 						{
+							vol: this.file_list[at].anime_vol,
 							file_name: this.file_list[at].file_name,
 							file_size: this.file_list[at].stat.size,
 							origin_path: this.file_list[at].full_path,
@@ -230,6 +239,8 @@ var file_system_tree = function()
 						if (tmp2.create_time > last_update_time) last_update_time = tmp2.create_time;
 						console.log(tmp2);
 					}
+					data.push(tmp2);
+
 
 				}
 				var tmp = 
