@@ -12,16 +12,17 @@
   %body
     %div.container
       %table.table.table-hover
-        - for (var i = 0, j = 0; i < anime_list.length; i++)
+        - for (var i = 0, j = 0, jp = 0; i < anime_list.length; i++)
           %tr
-            %td= anime_list[i].name
-            %td= anime_list[i].max_vol
-            - for (j = 1; j < anime_list[i].max_vol; j++)
-              %td
-                - if (!anime_list[i].data[j].empty)
-                  %a{href:"123"}=anime_list[i].data[j].vol
-                - if (anime_list[i].data[j].empty)
-                  %span= (j < 10 ? "0"+j : ""+j)
+            %th{colspan: 13}= anime_list[i].name
+          - for (jp = 1; jp < anime_list[i].max_vol; jp += 13)
+            %tr
+              - for (j = jp; j <= anime_list[i].max_vol && j < jp + 13 ; j++)
+                %td
+                  - if (!anime_list[i].data[j].empty)
+                    %a{ href:anime_list[i].data[j].download_path }=anime_list[i].data[j].vol
+                  - if (anime_list[i].data[j].empty)
+                    %span= (j < 10 ? "0"+j : ""+j)
 
 
 

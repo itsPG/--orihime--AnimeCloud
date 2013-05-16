@@ -212,7 +212,7 @@ var file_system_tree = function()
 				console.log(i.cyan);
 
 				//var max_vol = find_max_vol(anime_list[i]);
-				max_vol = 13;
+				max_vol = 26;
 				var last_update_time = new Date(1970,1,1,0,0,0,0);
 				var data = [];
 
@@ -234,7 +234,7 @@ var file_system_tree = function()
 							file_name: this.file_list[at].file_name,
 							file_size: this.file_list[at].stat.size,
 							origin_path: this.file_list[at].full_path,
-							download_path: this.file_list[at].md5,
+							download_path: "getfile/" + this.file_list[at].md5,
 							create_time: this.file_list[at].stat.ctime,
 							empty: false,
 						}
