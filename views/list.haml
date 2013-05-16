@@ -6,6 +6,7 @@
     %script{ src: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js", type: "text/javascript"}
     %link{ href:"//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css", rel:"stylesheet"}
     %link{ href:"/views/PG.css", rel:"stylesheet"}
+    %script{ src: "/views/list.js", type: "text/javascript"}
 
     -# javascript filter (and others)
     -# support arbitrary whitespace
@@ -20,7 +21,7 @@
               - for (j = jp; j <= anime_list[i].max_vol && j < jp + 13 ; j++)
                 %td
                   - if (!anime_list[i].data[j].empty)
-                    %a{ href:anime_list[i].data[j].download_path }=anime_list[i].data[j].vol
+                    %a{ href: anime_list[i].data[j].download_path, delta: anime_list[i].data[j].delta}=anime_list[i].data[j].vol
                   - if (anime_list[i].data[j].empty)
                     %span= (j < 10 ? "0"+j : ""+j)
 

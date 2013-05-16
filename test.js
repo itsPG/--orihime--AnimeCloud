@@ -205,6 +205,7 @@ var file_system_tree = function()
 				return r;
 			}
 			var anime_list = this.anime_list;
+			var time_now = new Date();
 			
 
 			for (var i in anime_list)
@@ -227,7 +228,11 @@ var file_system_tree = function()
 					}
 					else
 					{
+						var d="black";
 						//console.log( (j + " ").yellow , (at + " ").green );
+						var delta = time_now.getTime() - this.file_list[at].stat.ctime.getTime();
+						delta = delta/1000/3600/24;
+
 						tmp2 = 
 						{
 							vol: this.file_list[at].anime_vol,
@@ -237,6 +242,7 @@ var file_system_tree = function()
 							download_path: "getfile/" + this.file_list[at].md5,
 							create_time: this.file_list[at].stat.ctime,
 							empty: false,
+							delta: delta
 						}
 						if (tmp2.create_time > last_update_time) last_update_time = tmp2.create_time;
 						//console.log(tmp2);
