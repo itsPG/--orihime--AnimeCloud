@@ -125,8 +125,8 @@ var file_system_tree = function()
 					}
 					//console.log(this.anime_list);
 
-					r.stat = r.stat.ctime;
-					/* for jsdump */
+					//r.stat = r.stat.ctime;
+					///* for jsdump */
 					this.file_list.push(r);
 
 				}
@@ -147,12 +147,11 @@ var file_system_tree = function()
 			for (var i in anime_list)
 			{
 				console.log(i.red);
-
 				var max_vol = find_max_vol(anime_list[i]);
-				console.log("max_vol".cyan, max_vol);
+
 				for (var j = 0; j <= max_vol; j++)
 				{
-					//console.log(anime_list[i]);
+
 					if ((anime_list[i]).indexOf(j) == -1)
 					{
 						console.log("--");
@@ -178,6 +177,72 @@ var file_system_tree = function()
 		views_list: function()
 		{
 			var r = [];
+			/*
+				r.name
+				r.max_vol
+				r.last_update_time
+				r.data[]
+					[i].file_name
+					[i].file_size
+					[i].origin_path
+					[i].download_path
+					[i]r.create_time
+			*/
+			var find_max_vol = function(q)
+			{
+				var r = -1;
+				for (var i in q)
+				{
+					if (q[i] > r) r = q[i];
+				}
+				return r;
+			}
+			var anime_list = this.anime_list;
+			
+
+			for (var i in anime_list)
+			{
+				console.log(i.cyan);
+
+				var max_vol = find_max_vol(anime_list[i]);
+				var last_update_time = new Date(1970,1,1,0,0,0,0);
+				var data = [];
+
+				for (var j = 1; j <= max_vol; j++)
+				{
+					var tmp2 = {};
+					var at = anime_list[i][j];
+					if (at === undefined)
+					{
+						console.log( (j + " ").yellow , "--".red );
+					}
+					else
+					{
+						console.log( (j + " ").yellow , (at + " ").green );
+						tmp2 = 
+						{
+							file_name: this.file_list[at].file_name,
+							file_size: this.file_list[at].stat.size,
+							origin_path: this.file_list[at].full_path,
+							download_path: this.file_list[at].md5,
+							create_time: this.file_list[at].stat.ctime,
+						}
+						if (tmp2.create_time > last_update_time) last_update_time = tmp2.create_time;
+						console.log(tmp2);
+					}
+
+				}
+				var tmp = 
+				{
+					name: i,
+					max_vol: max_vol,
+					last_update_time: last_update_time,
+					data: data,
+				};
+				console.log(tmp);
+				r.push(tmp);
+			}
+			return r;
 
 		},
 
@@ -193,7 +258,7 @@ var PG = file_system_tree();
 PG.init();
 PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
 console.log(PG.anime_list);
-PG.show_anime_list();
+PG.views_list();
 
 //PG.scan_dir("");
 var express = require('express');
@@ -228,9 +293,7 @@ app.get("/list2", function(req, res)
 	//res.send("test");
 	res.render("list",
 	{
-		jsdump:jsdump,
-		anime_list:PG.anime_list,
-		test: "test ok",
+		anime_list: PG.views_list()
 	});
 
 });
