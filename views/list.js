@@ -5,15 +5,15 @@ var PG_color = function()
 		blue: [],
 		green: [],
 		red: [],
+		level_max: 7,
 
+		blue_factor:  [-12, -6, -1],
+		green_factor: [-9, -1, -9],
+		red_factor:   [-1, -12, -6],
 
-		blue_factor: [-20, -12, 0],
-		green_factor: [-10, 0, -10],
-		red_factor: [0, -20, -12],
-
-		blue_init: "#C2D6FF",
-		green_init: "#CCFFCC",
-		red_init: "#FFCCB2",
+		blue_init:  "#EFF8FB",
+		green_init: "#F5FBEF",
+		red_init:   "#FBF5EF",
 
 		int_to_hex: function(c)
 		{
@@ -49,7 +49,7 @@ var PG_color = function()
 
 		prepare_table: function()
 		{
-			for (var i = 0; i < 10; i++)
+			for (var i = 0; i < this.level_max; i++)
 			{
 				var tmp;
 				tmp = this.Hex_to_RGB(this.blue_init);
@@ -57,21 +57,46 @@ var PG_color = function()
 				this.blue.push(this.RGB_to_Hex(tmp[0] + i*this.blue_factor[0], tmp[1] + i*this.blue_factor[1], tmp[2] + i*this.blue_factor[2]));
 				tmp = this.Hex_to_RGB(this.green_init);
 				this.green.push(this.RGB_to_Hex(tmp[0] + i*this.green_factor[0], tmp[1] + i*this.green_factor[1], tmp[2] + i*this.green_factor[2]));
-				//tmp = Hex_to_RGB(blue_init);
-				//blue.push(RGB_to_Hex(tmp[0] + i*blue_factor[0], tmp[1] + i*blue_factor[1], tmp[2] + i*blue_factor[2]));
+				tmp = this.Hex_to_RGB(this.red_init);
+				this.red.push(this.RGB_to_Hex(tmp[0] + i*this.red_factor[0], tmp[1] + i*this.red_factor[1], tmp[2] + i*this.red_factor[2]));
 			}
+		},
+
+
+		color_demo_unit: function(target_ary)
+		{
+			$(document).ready(function()
+			{
+				for (var i = 0; i < target_ary.length; i++)
+				{
+					var a;
+					a = $("<div>test</div>");
+					$(a).css("background-color", target_ary[i]);
+					$(a).html(target_ary[i]);
+					$("body").append(a);
+				}
+				console.log(a);
+			});
+
+		},
+		color_demo: function()
+		{
+			this.color_demo_unit(r.blue);
+			this.color_demo_unit(r.green);
+			this.color_demo_unit(r.red);
 		},
 
 
 	}
 	r.prepare_table();
 	var debug_msg = "";
-	for (var i = 0; i < 10; i++) debug_msg += r.blue[i] + "\n";
-	alert(debug_msg);
+	for (var i = 0; i < r.level_max; i++) debug_msg += r.blue[i] + "\n";
+	//alert(debug_msg);
+	r.color_demo();
 	return r;
 }
 
-var C = PG_color();
+var color_table = PG_color();
 
 $(document).ready(function()
 {
@@ -79,35 +104,38 @@ $(document).ready(function()
 	{
 		var node = $(this), node_parent = node.parent();
 		var delta = node.attr("delta");
-		var csscolor = "black";
-		if (delta < 30)
+		var csscolor = "";
+		var factor;
+		var level_max = color_table.level_max;
+
+		if (delta < 21)
 		{
-			csscolor = "blue";
+			factor = Math.floor( (delta-14)/(21-14) * (level_max-1) );
+			factor = level_max - factor - 1;
+			csscolor = color_table.blue[factor];
+			//node.html(node.html() + csscolor);
 		}
+		if (delta < 14)
+		{
+			factor = Math.floor( (delta-7)/(14-7) * (level_max-1) );
+			factor = level_max - factor - 1;
+			csscolor = color_table.green[factor];
+			//node.html(node.html() + csscolor);
+		}
+
 		if (delta < 7)
 		{
-			csscolor = "green";
-		}
-		if (delta < 3)
-		{
-			csscolor = "orange";
-		}
-		if (delta < 1)
-		{
-			csscolor = "red";
+			factor = Math.floor( (delta-0)/(7-0) * (level_max-1) );
+			factor = level_max - factor - 1;
+			csscolor = color_table.red[factor];
+			//node.html(node.html() + csscolor);
 		}
 
 		node_parent.css("background-color", csscolor);
 	});
 
 	
-	for (var i = 0; i < 10; i++)
-	{
-		var a = $("<div>test</div>");
-		$(a).css("background-color", C.blue[i]);
-		$(a).html(C.blue[i]);
-		$("body").append(a);
-	}
+	
 	
 
 });
