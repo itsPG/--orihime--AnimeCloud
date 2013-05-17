@@ -12,10 +12,10 @@
     -# support arbitrary whitespace
   %body
     %div.container
-      %table.table.table-hover
-        - for (var i = 0, j = 0, jp = 0; i < anime_list.length; i++)
+      - for (var i = 0, j = 0, jp = 0; i < anime_list.length; i++)
+        %table.table.table-hover
           %tr
-            %th{colspan: 13}= anime_list[i].name
+          %th{colspan: 13}= anime_list[i].sub_name + " / " + anime_list[i].name
           - for (jp = 1; jp < anime_list[i].max_vol; jp += 13)
             %tr
               - for (j = jp; j <= anime_list[i].max_vol && j < jp + 13 ; j++)

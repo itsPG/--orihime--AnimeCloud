@@ -99,14 +99,26 @@ var file_system_tree = function()
 					var tag_tmp = r.file_name.split(".");
 					r.tag = tag_tmp[0].split(/[\[\]]+/);
 					this.clean_ary(r.tag, "");
-					for (var i = 0; i < r.tag.length; i++)
+
+					/*
+						we assume that an anime_vol will appear before [4] tag
+						otherwise, it should be "i < r.tag.length"
+					*/
+					for (var i = 0; i < 4 && i < r.tag.length; i++)
 					{
 						if (r.tag[i].match(/^[0-9vend ]+$/i))
 						{
 							//console.log(r.file_name, r.tag[i]);
 							r.anime_vol = r.tag[i];
 							var tmp = r.tag[i].match(/^[0-9]+/);
-							r.anime_vol_num = Number(tmp[0]);
+							if (tmp == null)
+							{
+								console.log("null error".red, r.tag[i], r.file_name);
+							}
+							else
+							{
+								r.anime_vol_num = Number(tmp[0]);
+							}
 						}
 					}
 					r.anime_name = r.tag[1];
@@ -216,6 +228,7 @@ var file_system_tree = function()
 				max_vol = 26;
 				var last_update_time = new Date(1970,1,1,0,0,0,0);
 				var data = [];
+				var sub_name = "";
 
 				for (var j = 1; j <= max_vol; j++)
 				{
@@ -233,9 +246,11 @@ var file_system_tree = function()
 						var delta = time_now.getTime() - this.file_list[at].stat.ctime.getTime();
 						delta = delta/1000/3600/24;
 
+						if (sub_name == "") sub_name = this.file_list[at].tag[0];
+
 						tmp2 = 
 						{
-							vol: this.file_list[at].anime_vol,
+							vol: pad_zero(this.file_list[at].anime_vol_num),
 							file_name: this.file_list[at].file_name,
 							file_size: this.file_list[at].stat.size,
 							origin_path: this.file_list[at].full_path,
@@ -255,6 +270,8 @@ var file_system_tree = function()
 					max_vol: max_vol,
 					last_update_time: last_update_time,
 					data: data,
+					sub_name: sub_name,
+
 				};
 				r.push(tmp);
 			}
@@ -272,7 +289,20 @@ var file_system_tree = function()
 var PG = file_system_tree();
 //PG.scan_dir("I:/sense/Anime/");
 PG.init();
-PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
+var PG_dev_level = 3;
+if (PG_dev_level == 3)
+{
+	PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
+	PG.scan_dir("E:/BT/BT_completed/");
+}
+else if (PG_dev_level == 2)
+{
+	PG.scan_dir("I:/sense/");
+}
+else
+{
+	PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
+}
 console.log(PG.anime_list);
 PG.views_list();
 
