@@ -2,6 +2,12 @@ body
 {
 	font-size: 1.5em;
 }
+a
+{
+
+	text-shadow: -1px -1px 0px #EEF, 1px 1px 0px #000;
+
+}
 .empty_slot
 {
 	color: #EEE;
@@ -9,4 +15,16 @@ body
 .btn
 {
 	font-size: 1.2em;
+}
+.new_anime
+{
+	-webkit-animation:myfirst 1s;
+	-webkit-animation-iteration-count:infinite;
+}
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+0%   {background: #FBFBEF;}
+50%  {background: #F5A9A9;}
+100%  {background: #FBFBEF;}
+
 }

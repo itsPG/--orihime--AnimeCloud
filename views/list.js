@@ -5,11 +5,11 @@ var PG_color = function()
 		blue: [],
 		green: [],
 		red: [],
-		level_max: 10,
+		level_max: 3,
 
-		blue_factor:  [-12, -6, -1],
-		green_factor: [-9, -1, -9],
-		red_factor:   [-1, -12, -6],
+		blue_factor:  [-40, -20, -2],
+		green_factor: [-30, -2, -30],
+		red_factor:   [-2, -40, -20],
 
 		blue_init:  "#EFF8FB",
 		green_init: "#F5FBEF",
@@ -52,13 +52,13 @@ var PG_color = function()
 			for (var i = 0; i < this.level_max; i++)
 			{
 				var tmp;
+				var j = Math.pow(i, 1.3);
 				tmp = this.Hex_to_RGB(this.blue_init);
-				console.log((tmp[0] + i*this.blue_factor[0], tmp[1] + i*this.blue_factor[1], tmp[2] + i*this.blue_factor[2]));
-				this.blue.push(this.RGB_to_Hex(tmp[0] + i*this.blue_factor[0], tmp[1] + i*this.blue_factor[1], tmp[2] + i*this.blue_factor[2]));
+				this.blue.push(this.RGB_to_Hex(tmp[0] + Math.floor(j*this.blue_factor[0]), tmp[1] + Math.floor(j*this.blue_factor[1]), tmp[2] + Math.floor(j*this.blue_factor[2]) ));
 				tmp = this.Hex_to_RGB(this.green_init);
-				this.green.push(this.RGB_to_Hex(tmp[0] + i*this.green_factor[0], tmp[1] + i*this.green_factor[1], tmp[2] + i*this.green_factor[2]));
+				this.green.push(this.RGB_to_Hex(tmp[0] + Math.floor(j*this.green_factor[0]), tmp[1] + Math.floor(j*this.green_factor[1]), tmp[2] + Math.floor(j*this.green_factor[2]) ));
 				tmp = this.Hex_to_RGB(this.red_init);
-				this.red.push(this.RGB_to_Hex(tmp[0] + i*this.red_factor[0], tmp[1] + i*this.red_factor[1], tmp[2] + i*this.red_factor[2]));
+				this.red.push(this.RGB_to_Hex(tmp[0] + Math.floor(j*this.red_factor[0]), tmp[1] + Math.floor(j*this.red_factor[1]), tmp[2] + Math.floor(j*this.red_factor[2]) ));
 			}
 		},
 
@@ -108,6 +108,7 @@ $(document).ready(function()
 		var factor;
 		var level_max = color_table.level_max;
 
+		 
 		if (delta < 21 && delta >= 14)
 		{
 			factor = Math.floor( (delta-14)/(21-14) * (level_max-1) );
@@ -125,7 +126,7 @@ $(document).ready(function()
 			//node.addClass("btn-success");
 		}
 
-		else if (delta < 7)
+		else if (delta < 7 && delta >=2 )
 		{
 			factor = Math.floor( (delta-0)/(7-0) * (level_max-1) );
 			factor = level_max - factor - 1;
@@ -133,9 +134,14 @@ $(document).ready(function()
 			//node.html(node.html() + csscolor);
 			//node.addClass("btn-warn");
 		}
+		else if (delta < 2)
+		{
+			node_parent.addClass("new_anime");
+		}
 
 		node_parent.css("background-color", csscolor);
 
+		//if (delta < 2) node_parent.addClass("new_anime");
 	});
 
 	
