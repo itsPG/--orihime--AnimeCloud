@@ -22,8 +22,8 @@ var file_system_tree = function()
 		*/
 		md5_map:[],
 		anime_list:[],
-		show_scan_dir_flag:true,
-		file_filter:undefined,
+		show_scan_dir_flag: false,
+		file_filter: undefined,
 
 		clean_ary: function(target_ary, delete_value)
 		{
@@ -92,7 +92,7 @@ var file_system_tree = function()
 						}
 					}
 					var hash = crypto.createHash('md5').update(r.full_path).digest("hex");
-					console.log(hash);
+					//console.log(hash);
 					this.md5_map[hash] = this.file_list.length;
 					r.md5 = hash;
 
@@ -100,27 +100,42 @@ var file_system_tree = function()
 					r.tag = tag_tmp[0].split(/[\[\]]+/);
 					this.clean_ary(r.tag, "");
 
+					var anime_vol_success_flag = false;
 					/*
 						we assume that an anime_vol will appear before [4] tag
 						otherwise, it should be "i < r.tag.length"
 					*/
 					for (var i = 0; i < 4 && i < r.tag.length; i++)
 					{
-						if (r.tag[i].match(/^[0-9vend ]+$/i))
+						if (r.tag[i].match(/^[0-9+][0-9vend ]+$/i))
 						{
 							//console.log(r.file_name, r.tag[i]);
-							r.anime_vol = r.tag[i];
+							
 							var tmp = r.tag[i].match(/^[0-9]+/);
+							
+							
 							if (tmp == null)
 							{
 								console.log("null error".red, r.tag[i], r.file_name);
+								continue;
+							}
+
+
+							var num_tmp = Number(tmp[0]);
+							if (num_tmp > 52)
+							{
+								console.log("num_tmp error".red, r.tag[i], r.file_name);
 							}
 							else
 							{
-								r.anime_vol_num = Number(tmp[0]);
+								r.anime_vol = r.tag[i];
+								r.anime_vol_num = num_tmp;
+								anime_vol_success_flag = true;
 							}
 						}
 					}
+					if (!anime_vol_success_flag) continue;
+
 					r.anime_name = r.tag[1];
 
 					if (r.anime_vol_num !== undefined)
@@ -151,7 +166,7 @@ var file_system_tree = function()
 				var r = -1;
 				for (var i in q)
 				{
-					if (q[i] > r) r = q[i];
+					if (i > r) r = i;
 				}
 				return r;
 			}
@@ -206,7 +221,7 @@ var file_system_tree = function()
 				var r = -1;
 				for (var i in q)
 				{
-					if (q[i] > r) r = q[i];
+					if (i > r) r = i;
 				}
 				return r;
 			}
@@ -224,8 +239,9 @@ var file_system_tree = function()
 			{
 				//console.log(i.cyan);
 
-				//var max_vol = find_max_vol(anime_list[i]);
-				max_vol = 26;
+				var max_vol = find_max_vol(anime_list[i]);
+				max_vol = Math.floor(max_vol/13) + 13;
+				//max_vol = 26;
 				var last_update_time = new Date(1970,1,1,0,0,0,0);
 				var data = [];
 				var sub_name = "";
@@ -241,7 +257,7 @@ var file_system_tree = function()
 					}
 					else
 					{
-						var d="black";
+						var d = "black";
 						//console.log( (j + " ").yellow , (at + " ").green );
 						var delta = time_now.getTime() - this.file_list[at].stat.ctime.getTime();
 						delta = delta/1000/3600/24;
@@ -287,29 +303,35 @@ var file_system_tree = function()
 }
 
 var PG = file_system_tree();
-//PG.scan_dir("I:/sense/Anime/");
-PG.init();
-var PG_dev_level = 3;
-if (PG_dev_level == 3)
-{
-	PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
-	PG.scan_dir("E:/BT/BT_completed/");
-}
-else if (PG_dev_level == 2)
-{
-	PG.scan_dir("I:/sense/");
-}
-else
-{
-	PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
-}
-console.log(PG.anime_list);
-PG.views_list();
+var list_last_update_time = new Date();
 
-//PG.scan_dir("");
+function set_PG()
+{
+	PG.init();
+	var PG_dev_level = 3;
+	if (PG_dev_level == 3)
+	{
+		PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
+		PG.scan_dir("E:/BT/BT_completed/");
+	}
+	else if (PG_dev_level == 2)
+	{
+		PG.scan_dir("I:/sense/");
+	}
+	else
+	{
+		PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
+	}
+
+	PG.views_list();
+}
+set_PG();
+
+
 var express = require('express');
 var app = express();
 var cons = require("consolidate");
+
 app.engine("haml", cons.haml);
 app.set("view engine", "haml");
 app.set("views", __dirname + "/views");
