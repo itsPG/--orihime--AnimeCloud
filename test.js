@@ -322,8 +322,8 @@ function set_PG()
 	{
 		PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
 	}
-
 	PG.views_list();
+	list_last_update_time = new Date();
 }
 set_PG();
 
@@ -359,6 +359,8 @@ app.get("/list", function(req, res)
 app.get("/list2", function(req, res)
 {
 	//res.send("test");
+	var now = new Date();
+	console.log(now.getTime() - list_last_update_time.getTime());
 	res.render("list",
 	{
 		anime_list: PG.views_list()

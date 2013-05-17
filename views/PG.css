@@ -2,3 +2,11 @@ body
 {
 	font-size: 1.5em;
 }
+.empty_slot
+{
+	color: #EEE;
+}
+.btn
+{
+	font-size: 1.2em;
+}

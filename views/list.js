@@ -5,7 +5,7 @@ var PG_color = function()
 		blue: [],
 		green: [],
 		red: [],
-		level_max: 7,
+		level_max: 10,
 
 		blue_factor:  [-12, -6, -1],
 		green_factor: [-9, -1, -9],
@@ -108,30 +108,34 @@ $(document).ready(function()
 		var factor;
 		var level_max = color_table.level_max;
 
-		if (delta < 21)
+		if (delta < 21 && delta >= 14)
 		{
 			factor = Math.floor( (delta-14)/(21-14) * (level_max-1) );
 			factor = level_max - factor - 1;
 			csscolor = color_table.blue[factor];
 			//node.html(node.html() + csscolor);
+			//node.addClass("btn-info");
 		}
-		if (delta < 14)
+		else if (delta < 14 && delta >= 7)
 		{
 			factor = Math.floor( (delta-7)/(14-7) * (level_max-1) );
 			factor = level_max - factor - 1;
 			csscolor = color_table.green[factor];
 			//node.html(node.html() + csscolor);
+			//node.addClass("btn-success");
 		}
 
-		if (delta < 7)
+		else if (delta < 7)
 		{
 			factor = Math.floor( (delta-0)/(7-0) * (level_max-1) );
 			factor = level_max - factor - 1;
 			csscolor = color_table.red[factor];
 			//node.html(node.html() + csscolor);
+			//node.addClass("btn-warn");
 		}
 
 		node_parent.css("background-color", csscolor);
+
 	});
 
 	

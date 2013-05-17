@@ -23,7 +23,7 @@
                   - if (!anime_list[i].data[j].empty)
                     %a{ href: anime_list[i].data[j].download_path, delta: anime_list[i].data[j].delta}=anime_list[i].data[j].vol
                   - if (anime_list[i].data[j].empty)
-                    %span= (j < 10 ? "0"+j : ""+j)
+                    %span.empty_slot= (j < 10 ? "0"+j : ""+j)
 
 
 
