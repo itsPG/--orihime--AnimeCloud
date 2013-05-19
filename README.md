@@ -14,9 +14,9 @@ However, it just works.
 
 * Type `npm install` to fix the dependence problems
 
-# To use
-
 * Modify `set_PG` function
+
+# To use
 
 * Run `node ./test.js`
 
