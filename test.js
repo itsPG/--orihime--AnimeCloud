@@ -271,7 +271,8 @@ var file_system_tree = function()
 							file_name: this.file_list[at].file_name,
 							file_size: this.file_list[at].stat.size,
 							origin_path: this.file_list[at].full_path,
-							download_path: "getfile/" + this.file_list[at].md5,
+							//download_path: "getfile/" + this.file_list[at].md5,
+							download_path: "getfile/" + this.file_list[at].md5 + "/go",
 							create_time: this.file_list[at].stat.ctime,
 							empty: false,
 							delta: delta
