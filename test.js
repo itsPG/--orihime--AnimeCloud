@@ -203,6 +203,7 @@ var file_system_tree = function()
 		},
 		views_list: function()
 		{
+			//console.log("this", this);
 			var r = [];
 			/*
 				r.name
@@ -291,7 +292,18 @@ var file_system_tree = function()
 				};
 				r.push(tmp);
 			}
+
+			var cmp = function(a, b)
+			{
+				return b.last_update_time - a.last_update_time;
+			}
+			r.sort(cmp);
 			return r;
+
+		},
+		test: function()
+		{
+			console.log("test was called".cyan);
 
 		},
 
@@ -301,9 +313,56 @@ var file_system_tree = function()
 	}
 	return r;
 }
+var views_cache_system = function()
+{
+	var r = 
+	{
+		views_table: [],
+		register: function(name, obj, interval, ref) // interval: minutes
+		{
+			var tmp = 
+			{
+				view: obj,
+				interval: interval*1000*60,
+				ref: ref,
+				cache: undefined,
+				last_update_time: new Date(),
+			};
+			this.views_table[name] = tmp;
+		},
+		view: function(name)
+		{
+			var debug_flag = true;
+			var node = this.views_table[name];
+			if (node === undefined)
+			{
+				console.log("views_cache_system error: cant find".red, name);
+				return;
+			}
+			var now = new Date();
+			var delta = now.getTime() - node.last_update_time.getTime();
+			if (node.cache === undefined || delta > node.interval)
+			{
+				if (node.ref !== undefined)
+				{
+					node.cache = node.view.call(node.ref);
+				}
+				else
+				{
+					node.cache = node.view();
+				}
+				node.last_update_time = now;
+				if (node.cache === undefined) node.cache = null;
+			}
+			if (debug_flag) console.log("[cache system]".cyan, name.green, delta, now.getTime() - node.last_update_time.getTime());
+			return node.cache;
+		},
+	}
+	return r;
+};
 
 var PG = file_system_tree();
-var list_last_update_time = new Date();
+var PG_cache = views_cache_system();
 
 function set_PG()
 {
@@ -313,6 +372,7 @@ function set_PG()
 	{
 		PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
 		PG.scan_dir("E:/BT/BT_completed/");
+		//PG.scan_dir("E:/Anime-New/!__ON AIR__!/みなみけ ただいま/");
 	}
 	else if (PG_dev_level == 2)
 	{
@@ -322,11 +382,12 @@ function set_PG()
 	{
 		PG.scan_dir("/Users/PG/Dropbox/code/anime2/test_sample/src/");
 	}
-	PG.views_list();
-	list_last_update_time = new Date();
-}
-set_PG();
 
+	
+}
+PG_cache.register("set_PG", set_PG, 10);
+PG_cache.register("views_list", PG.views_list, 10, PG);
+PG.views_list();
 
 var express = require('express');
 var app = express();
@@ -360,10 +421,10 @@ app.get("/list2", function(req, res)
 {
 	//res.send("test");
 	var now = new Date();
-	console.log(now.getTime() - list_last_update_time.getTime());
+	PG_cache.view("set_PG");
 	res.render("list",
 	{
-		anime_list: PG.views_list()
+		anime_list: PG_cache.view("views_list")
 	});
 
 });

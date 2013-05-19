@@ -12,19 +12,19 @@
     -# support arbitrary whitespace
   %body
     %div.container
-      - for (var i = 0, j = 0, jp = 0; i < anime_list.length; i++)
-        %table.table.table-hover
+      %table.table.table-hover
+        - for (var i = 0, j = 0, jp = 0; i < anime_list.length; i++)
           %tr
-          %th{colspan: 13}= anime_list[i].sub_name + " / " + anime_list[i].name
-          - for (jp = 1; jp < anime_list[i].max_vol; jp += 13)
-            %tr
-              - for (j = jp; j <= anime_list[i].max_vol && j < jp + 13 ; j++)
-                %td
-                  - if (!anime_list[i].data[j].empty)
-                    %span
-                      %a{ href: anime_list[i].data[j].download_path, delta: anime_list[i].data[j].delta}=anime_list[i].data[j].vol
-                  - if (anime_list[i].data[j].empty)
-                    %span.empty_slot= (j < 10 ? "0"+j : ""+j)
+            %th{colspan: 13}= anime_list[i].sub_name + " / " + anime_list[i].name
+            - for (jp = 1; jp < anime_list[i].max_vol; jp += 13)
+              %tr
+                - for (j = jp; j <= anime_list[i].max_vol && j < jp + 13 ; j++)
+                  %td
+                    - if (!anime_list[i].data[j].empty)
+                      %span
+                        %a{ href: anime_list[i].data[j].download_path, delta: anime_list[i].data[j].delta}=anime_list[i].data[j].vol
+                    - if (anime_list[i].data[j].empty)
+                      %span.empty_slot= (j < 10 ? "0"+j : ""+j)
 
 
 
