@@ -1,11 +1,11 @@
 {
-  "name": "anime_list",
-  "description": "orihime anime_list",
-  "version": "0.0.1",
-  "private": true,
+  "name": "orihime_AnimeCloud",
+  "description": "orihime_AnimeCloud, which help you list all anime under the directory you selected",
+  "version": "0.1.0",
   "dependencies": {
     "express": "3.x",
     "colorplus": "*",
     "consolidate": "*",
+    "haml.js": "*",
   }
 }
