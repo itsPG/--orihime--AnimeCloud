@@ -1,0 +1,35 @@
+body
+{
+	font-size: 1.5em;
+	background-color: #999;
+}
+.container
+{
+	background-color: #EEE;
+}
+a
+{
+
+	text-shadow: 1px 1px 1px #009;
+
+}
+.empty_slot
+{
+	color: #CCC;
+}
+.btn
+{
+	font-size: 1.2em;
+}
+.new_anime
+{
+	-webkit-animation:myfirst 1s;
+	-webkit-animation-iteration-count:infinite;
+}
+@-webkit-keyframes myfirst /* Safari and Chrome */
+{
+0%   {background: #FBFBEF;}
+50%  {background: #F5A9A9;}
+100%  {background: #FBFBEF;}
+
+}
