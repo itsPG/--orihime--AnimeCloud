@@ -5,7 +5,7 @@ var PG_color = function()
 		blue: [],
 		green: [],
 		red: [],
-		level_max: 3,
+		level_max: 4,
 
 		blue_factor:  [-40, -20, -2],
 		green_factor: [-30, -2, -30],
@@ -108,7 +108,7 @@ $(document).ready(function()
 		var factor;
 		var level_max = color_table.level_max;
 
-		 
+
 		if (delta < 21 && delta >= 14)
 		{
 			factor = Math.floor( (delta-14)/(21-14) * (level_max-1) );
@@ -126,7 +126,7 @@ $(document).ready(function()
 			//node.addClass("btn-success");
 		}
 
-		else if (delta < 7 && delta >=2 )
+		else if (delta < 7 && delta >=1 )
 		{
 			factor = Math.floor( (delta-0)/(7-0) * (level_max-1) );
 			factor = level_max - factor - 1;
@@ -134,7 +134,7 @@ $(document).ready(function()
 			//node.html(node.html() + csscolor);
 			//node.addClass("btn-warn");
 		}
-		else if (delta < 2)
+		else if (delta < 1)
 		{
 			node_parent.addClass("new_anime");
 		}
