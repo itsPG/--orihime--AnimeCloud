@@ -6,6 +6,8 @@
     %script{ src: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js", type: "text/javascript"}
     %link{ href:"//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css", rel:"stylesheet"}
     %link{ href:"/views/PG.css", rel:"stylesheet"}
+    %link{ href:"http://fonts.googleapis.com/css?family=Marck+Script", rel:"stylesheet"}
+    %link{ href:"http://fonts.googleapis.com/css?family=Special+Elite", rel:"stylesheet"}
     %script{ src: "/views/list.js", type: "text/javascript"}
 
     -# javascript filter (and others)
@@ -25,7 +27,6 @@
                         %a{ href: anime_list[i].data[j].download_path, delta: anime_list[i].data[j].delta}=anime_list[i].data[j].vol
                     - if (anime_list[i].data[j].empty)
                       %span.empty_slot= (j < 10 ? "0"+j : ""+j)
-
 
 
 

@@ -111,7 +111,7 @@ var file_system_tree = function()
 						{
 							//console.log(r.file_name, r.tag[i]);
 							
-							var tmp = r.tag[i].match(/^[0-9]+/);
+							var tmp = r.tag[i].match(/^[0-9\.]+/);
 							
 							
 							if (tmp == null)
@@ -201,6 +201,18 @@ var file_system_tree = function()
 			}
 			else return undefined;
 		},
+
+		find_max_vol: function(q)
+		{
+			var r = -1;
+			for (var i in q)
+			{
+				var at = q[i];
+				if (this.file_list[at].anime_vol_num > r) r = this.file_list[at].anime_vol_num;
+			}
+			return r;
+		},
+
 		views_list: function()
 		{
 			//console.log("this", this);
@@ -217,15 +229,7 @@ var file_system_tree = function()
 					[i].download_path
 					[i]r.create_time
 			*/
-			var find_max_vol = function(q)
-			{
-				var r = -1;
-				for (var i in q)
-				{
-					if (i > r) r = i;
-				}
-				return r;
-			}
+
 			var pad_zero = function(q)
 			{
 				var r = q + "";
@@ -240,14 +244,16 @@ var file_system_tree = function()
 			{
 				//console.log(i.cyan);
 
-				var max_vol = find_max_vol(anime_list[i]);
-				max_vol = Math.floor(max_vol/13) + 13;
+				var max_vol = this.find_max_vol(anime_list[i]);
+				//console.log(anime_list[i], i, max_vol);
+				max_vol = Math.floor((max_vol-1)/13)*13+13;
+				//console.log(i, max_vol);
 				//max_vol = 26;
 				var last_update_time = new Date(1970,1,1,0,0,0,0);
 				var data = [];
 				var sub_name = "";
 
-				for (var j = 1; j <= max_vol; j++)
+				for (var j = 1; j <= max_vol; j+=1)
 				{
 					var tmp2 = {};
 					var at = anime_list[i][j];
@@ -372,7 +378,8 @@ function set_PG()
 	var PG_dev_level = 3;
 	if (PG_dev_level == 3)
 	{
-		PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
+		//PG.scan_dir("E:/Anime-New/!__ON AIR__!/未分類/");
+		//PG.scan_dir("E:/Anime-New/2013Q2/");
 		PG.scan_dir("E:/BT/BT_completed/");
 		//PG.scan_dir("E:/Anime-New/!__ON AIR__!/みなみけ ただいま/");
 	}
@@ -387,8 +394,8 @@ function set_PG()
 
 	
 }
-PG_cache.register("set_PG", set_PG, 10);
-PG_cache.register("views_list", PG.views_list, 10, PG);
+PG_cache.register("set_PG", set_PG, 3);
+PG_cache.register("views_list", PG.views_list, 3, PG);
 PG.views_list();
 
 var express = require('express');
@@ -405,7 +412,7 @@ app.get("/", function(req, res)
 	res.send("Orihime (TM)");
 });
 
-app.get("/list", function(req, res)
+app.get("/oldlist", function(req, res)
 {
 	var output_buffer = "";
 	for (var i = 0; i < PG.file_list.length; i++)
@@ -463,14 +470,16 @@ app.get("/getfile/:file/go", function(req, res)
 
 	var output_buffer = "";
 	var query_result = PG.query(req.params["file"]);
-	console.log(query_result);
+	//console.log(query_result);
 	if (query_result !== undefined)
 	{
 		res.download(query_result.full_path);
+		console.log(("[" + req.ip + "]").green, query_result.file_name.cyan);
 	}
 	else
 	{
 		res.send("Error");
+		console.log(("[" + req.ip + "]").red, req.params["file"]);
 	}
 
 

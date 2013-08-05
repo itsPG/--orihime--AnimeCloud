@@ -1,16 +1,23 @@
+/*
+http://www.google.com/fonts/#UsePlace:use/Collection:Marck+Script
+http://www.google.com/fonts#UsePlace:use/Collection:Special+Elite
+*/
 body
 {
 	font-size: 1.5em;
 	background-color: #999;
+	/*font-family: 'Marck Script', cursive;*/
 }
 .container
 {
 	background-color: #EEE;
 }
+
 a
 {
-
-	text-shadow: 1px 1px 1px #009;
+	/*font-family: 'Special Elite', cursive;*/
+	color: #333;
+	text-shadow: 2px 2px 3px #999;
 
 }
 .empty_slot
@@ -23,13 +30,15 @@ a
 }
 .new_anime
 {
+
 	-webkit-animation:myfirst 1s;
 	-webkit-animation-iteration-count:infinite;
 }
+
 @-webkit-keyframes myfirst /* Safari and Chrome */
 {
 0%   {background: #FBFBEF;}
-50%  {background: #F5A9A9;}
+50%  {background: #F78181;}
 100%  {background: #FBFBEF;}
 
 }
