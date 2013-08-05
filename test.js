@@ -308,6 +308,35 @@ var file_system_tree = function()
 			return r;
 
 		},
+
+		view_synclist: function()
+		{
+			//return jsdump.parse(this.views_list());
+			var anime_list = this.views_list();
+			var list = [];
+			for (var i in anime_list)
+			{
+				console.log(i, anime_list[i]);
+				for (var j = 1; j < anime_list[i].length; j++)
+				{
+					var node = anime_list[i][j];
+					//if (node.create_time.getTime() > Date(2013,7,1,0,0,0,0).getTime())
+					{
+						var tmp = 
+						{
+							file_name: node.file_name,
+							download_path: node.download_path,
+							create_time: node.create_time
+						};
+						list.push(tmp);
+					}
+
+				}
+			}
+			return jsdump.parse(list);
+
+		},
+
 		test: function()
 		{
 			console.log("test was called".cyan);
@@ -426,17 +455,27 @@ app.get("/oldlist", function(req, res)
 
 
 });
+
 app.get("/list2", function(req, res)
 {
 	//res.send("test");
 	var now = new Date();
 	PG_cache.view("set_PG");
+	res.send("<h1>程式功能更新中～</h1>");
 	res.render("list",
 	{
 		anime_list: PG_cache.view("views_list")
 	});
+});
+
+app.get("/synclist", function(req, res)
+{
+	PG_cache.view("set_PG");
+	res.send(PG.view_synclist());
 
 });
+
+
 app.get("/getfile/:file", function(req, res)
 {
 
