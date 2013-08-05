@@ -314,25 +314,43 @@ var file_system_tree = function()
 			//return jsdump.parse(this.views_list());
 			var anime_list = this.views_list();
 			var list = [];
-			for (var i in anime_list)
+			var cmp = function(a, b)
 			{
-				console.log(i, anime_list[i]);
-				for (var j = 1; j < anime_list[i].length; j++)
+				return b.create_time - a.create_time;
+			}
+			for (var i = 0; i < anime_list.length; i++)
+			{
+				//console.log(i, anime_list[i]);
+				for (var j = 1; j < anime_list[i].data.length; j++)
 				{
-					var node = anime_list[i][j];
-					//if (node.create_time.getTime() > Date(2013,7,1,0,0,0,0).getTime())
+
+					var node = anime_list[i].data[j];
+					if (node.empty) continue;
+					var ctime = new Date(node.create_time);
+					var th = new Date(2013,6,1,0,0,0,0);
+					if (ctime.getTime() - th.getTime())
 					{
+
 						var tmp = 
 						{
 							file_name: node.file_name,
 							download_path: node.download_path,
-							create_time: node.create_time
+							create_time: node.create_time,
+							//t: (ctime.getTime() - th.getTime())/3600000/24,
 						};
 						list.push(tmp);
+						console.log(tmp.file_name);
 					}
 
 				}
 			}
+			list.sort(cmp);
+			var r = "";
+			for (var i = 0; i < list.length; i++)
+			{
+				r += "wget http://eruru.tw:35101/" + list[i].download_path + " -O \"" + list[i].file_name + "\"\n";
+			}
+			return r;
 			return jsdump.parse(list);
 
 		},
@@ -461,7 +479,7 @@ app.get("/list2", function(req, res)
 	//res.send("test");
 	var now = new Date();
 	PG_cache.view("set_PG");
-	res.send("<h1>程式功能更新中～</h1>");
+	//res.send("<h1>程式功能更新中～</h1>");
 	res.render("list",
 	{
 		anime_list: PG_cache.view("views_list")
