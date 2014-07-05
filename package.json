@@ -6,6 +6,6 @@
     "express": "3.x",
     "colorplus": "*",
     "consolidate": "*",
-    "haml.js": "*",
+    "haml": "*"
   }
 }
