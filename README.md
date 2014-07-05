@@ -2,6 +2,8 @@
 
 This software help you list all animes under the directories you selected.
 
+![](http://itspg.org/img/animecloud.jpg)
+
 # Warning
 
 This software is under construction now.
