@@ -7,11 +7,13 @@ app.get('/hello.txt', function(req, res){
   res.end(body);
 });
 var middleware;
-app.get("/f/:id", function(req, res){console.log(req); res.send("Hello" + req.params["id"]);});
+app.get("/f/:id", function(req, res){
+  console.log(req); 
+  res.send("Hello" + req.params.id);
+});
 app.get("/t", function(req, res)
 {
-	res.sendfile("./a.bat")
-
+  res.sendfile("./a.bat");
 });
 function logErrors(err, req, res, next) {
   console.error(err.stack);
